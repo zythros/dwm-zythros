@@ -34,7 +34,7 @@ BUILD_DEPS=(
 
 # Runtime dependencies
 RUNTIME_DEPS=(
-    "st"
+    "alacritty"
     "rofi"
     "thunar"
 )
