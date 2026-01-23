@@ -5,15 +5,15 @@
 
 set -e
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Colors (exported for sub-scripts)
+export RED='\033[0;31m'
+export GREEN='\033[0;32m'
+export YELLOW='\033[1;33m'
+export NC='\033[0m' # No Color
 
-INSTALL_DIR="$HOME/.config/dwm"
+export INSTALL_DIR="$HOME/.config/dwm"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DESKTOP_FILE="/usr/share/xsessions/dwm.desktop"
+export DESKTOP_FILE="/usr/share/xsessions/dwm.desktop"
 
 echo -e "${GREEN}dwm-zythros installer${NC}\n"
 
@@ -86,9 +86,10 @@ install_dwm() {
 
     mkdir -p "$INSTALL_DIR"
 
-    # Copy source files
+    # Copy source files (exclude installer and sub-scripts)
     cp -r "$SCRIPT_DIR"/* "$INSTALL_DIR/"
-    rm -f "$INSTALL_DIR/install.sh"  # Don't need installer in config
+    rm -f "$INSTALL_DIR/install.sh"
+    rm -rf "$INSTALL_DIR/scripts"
 
     # Build
     cd "$INSTALL_DIR"
@@ -113,37 +114,16 @@ EOF
     echo -e "${GREEN}Desktop entry created at $DESKTOP_FILE${NC}"
 }
 
-# Setup xprofile for VM display resolution
-setup_xprofile() {
-    local XPROFILE="$HOME/.xprofile"
-    local MARKER="# dwm-zythros VM display"
-
-    # Check if already configured
-    if [ -f "$XPROFILE" ] && grep -q "$MARKER" "$XPROFILE"; then
-        echo -e "${YELLOW}xprofile already configured, skipping${NC}"
-        return
-    fi
-
-    echo -e "${YELLOW}Configuring ~/.xprofile for VM display...${NC}"
-
-    cat >> "$XPROFILE" << 'EOF'
-
-# dwm-zythros VM display
-# Comment out these lines if not running in a VM
-xrandr --output Virtual-1 --primary --mode 2560x1080 --pos 0x0 --rotate normal
-# end dwm-zythros VM display
-EOF
-
-    chmod +x "$XPROFILE"
-    echo -e "${GREEN}xprofile configured${NC}"
-}
-
 # Main
 install_deps
 backup_existing
 install_dwm
 create_desktop_entry
-setup_xprofile
+
+# Optional sub-scripts (comment out to skip)
+"$SCRIPT_DIR"/scripts/chaotic-aur.sh
+"$SCRIPT_DIR"/scripts/packages.sh
+"$SCRIPT_DIR"/scripts/xprofile.sh
 
 echo -e "\n${GREEN}Installation complete!${NC}"
 echo -e "Select 'dwm' from your display manager to start"
