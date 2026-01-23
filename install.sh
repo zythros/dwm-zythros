@@ -116,13 +116,13 @@ EOF
 }
 
 # Main
+"$SCRIPT_DIR"/scripts/chaotic-aur.sh  # Required for AUR packages below
 install_deps
 backup_existing
 install_dwm
 create_desktop_entry
 
 # Optional sub-scripts (comment out to skip)
-"$SCRIPT_DIR"/scripts/chaotic-aur.sh
 "$SCRIPT_DIR"/scripts/packages.sh
 "$SCRIPT_DIR"/scripts/xprofile.sh
 
