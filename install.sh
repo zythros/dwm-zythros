@@ -37,6 +37,7 @@ RUNTIME_DEPS=(
     "alacritty"
     "rofi"
     "thunar"
+    "wlogout"
     "xorg-xrandr"
 )
 
