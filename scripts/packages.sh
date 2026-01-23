@@ -8,6 +8,7 @@ set -e
 PACKAGES=(
     "mullvad-browser-bin"
     "brave-bin"
+    "vim"
 )
 
 echo -e "${YELLOW}Installing personal packages...${NC}"
