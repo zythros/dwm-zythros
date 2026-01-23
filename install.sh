@@ -37,6 +37,7 @@ RUNTIME_DEPS=(
     "alacritty"
     "rofi"
     "thunar"
+    "xorg-xrandr"
 )
 
 # Check and install dependencies
@@ -112,14 +113,41 @@ EOF
     echo -e "${GREEN}Desktop entry created at $DESKTOP_FILE${NC}"
 }
 
+# Setup xprofile for VM display resolution
+setup_xprofile() {
+    local XPROFILE="$HOME/.xprofile"
+    local MARKER="# dwm-zythros VM display"
+
+    # Check if already configured
+    if [ -f "$XPROFILE" ] && grep -q "$MARKER" "$XPROFILE"; then
+        echo -e "${YELLOW}xprofile already configured, skipping${NC}"
+        return
+    fi
+
+    echo -e "${YELLOW}Configuring ~/.xprofile for VM display...${NC}"
+
+    cat >> "$XPROFILE" << 'EOF'
+
+# dwm-zythros VM display
+# Comment out these lines if not running in a VM
+xrandr --output Virtual-1 --primary --mode 2560x1080 --pos 0x0 --rotate normal
+# end dwm-zythros VM display
+EOF
+
+    chmod +x "$XPROFILE"
+    echo -e "${GREEN}xprofile configured${NC}"
+}
+
 # Main
 install_deps
 backup_existing
 install_dwm
 create_desktop_entry
+setup_xprofile
 
 echo -e "\n${GREEN}Installation complete!${NC}"
 echo -e "Select 'dwm' from your display manager to start"
 echo -e "Config location: $INSTALL_DIR/config.h"
+echo -e "VM display config: ~/.xprofile (comment out if not in VM)"
 echo -e "\nTo rebuild after config changes:"
 echo -e "  cd $INSTALL_DIR && make clean && make"
